@@ -105,7 +105,7 @@ const Navbar: React.FC<NavbarProps> = ({ className = "" }) => {
 
       {/* "Go to app" Button using ShadCN */}
       <Button asChild className="bg-black text-white hover:bg-gray-800">
-        <Link href="/app">Go to app</Link>
+        <Link href="/home">Go to app</Link>
       </Button>
     </nav>
   );

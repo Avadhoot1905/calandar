@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import SidebarMenu from "../../components/side";
+import SidebarMenu from "@/components/side";
 import { SidebarProvider } from "@/components/ui/sidebar";
 
 const HomePage: React.FC = () => {
