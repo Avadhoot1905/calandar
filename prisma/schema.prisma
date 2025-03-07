@@ -45,7 +45,10 @@ model User {
   accounts      Account[]
   sessions      Session[]
   events        Event[]
-  taggedEvents  EventTag[] // Relation for tagged events
+  taggedEvents  EventTag[]
+  availability  Availability[] // Added availability relation
+
+  Booking Booking[]
 }
 
 model Event {
@@ -60,26 +63,57 @@ model Event {
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
   user          User      @relation(fields: [userId], references: [id])
-  tags          EventTag[] // Relation for tagged users
+  tags          EventTag[]
+  bookings      Booking[] // Added bookings relation
 }
 
 model EventTag {
   id        String   @id @default(cuid())
   eventId   String
   userId    String
-  status    TagStatus @default(PENDING) // To track if the user has accepted the tag
+  status    TagStatus @default(PENDING)
   createdAt DateTime @default(now())
 
   event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
   user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@unique([eventId, userId]) // Ensure a user can be tagged only once per event
+  @@unique([eventId, userId])
 }
 
 enum TagStatus {
-  PENDING  // Waiting for user confirmation
-  ACCEPTED // User has accepted being tagged
-  DECLINED // User declined the tag
+  PENDING
+  ACCEPTED
+  DECLINED
+}
+
+model Booking {
+  id        String   @id @default(cuid())
+  eventId   String
+  userId    String
+  startTime DateTime
+  endTime   DateTime
+  status    BookingStatus @default(CONFIRMED) // Added default status
+  createdAt DateTime @default(now())
+
+  event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  CANCELED
+}
+
+model Availability {
+  id        String   @id @default(cuid())
+  userId    String
+  dayOfWeek Int // Stores day of the week (0-6)
+  startTime DateTime
+  endTime   DateTime
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model VerificationRequest {

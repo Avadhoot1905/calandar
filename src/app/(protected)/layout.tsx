@@ -10,8 +10,7 @@ export default async function ProtectedLayout({
   const session = await getServerSession(authOptions);
 
   if (!session) {
-    console.log("Not signed in")
-    redirect("/landing");
+    redirect("/landing?message=signin_required");
   }
 
   return <>{children}</>;

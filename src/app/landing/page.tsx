@@ -5,9 +5,13 @@ import NavBar from "../../components/NavBar";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { signIn } from "next-auth/react";
+import { useSearchParams } from "next/navigation";
 
 const LandingPage: React.FC = () => {
   const [scrolled, setScrolled] = useState(false);
+  const searchParams = useSearchParams();
+  const message = searchParams.get("message");
+  const [showPopup, setShowPopup] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -17,7 +21,12 @@ const LandingPage: React.FC = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Client-side sign-in function
+  useEffect(() => {
+    if (message === "signin_required") {
+      setShowPopup(true);
+    }
+  }, [message]);
+
   const handleSignIn = async () => {
     try {
       await signIn("google");
@@ -28,6 +37,18 @@ const LandingPage: React.FC = () => {
 
   return (
     <div>
+      {/* Popup for Sign-in Required Message */}
+      {showPopup && (
+        <div className="fixed bottom-4 right-4 p-4 bg-white shadow-lg rounded-lg z-50 flex flex-col items-center text-center">
+          <h2 className="text-xl font-bold text-gray-900 mb-2">Sign In Required</h2>
+          <p className="text-gray-600 mb-4">You need to sign in to view this page.</p>
+          <Button onClick={() => setShowPopup(false)} className="bg-blue-500 text-white px-4 py-2 rounded">
+            OK
+          </Button>
+        </div>
+      )}
+
+
       <div className="max-w-6xl mx-auto flex justify-center">
         <NavBar
           className={`fixed top-0 transition-all duration-300 ${
@@ -46,7 +67,6 @@ const LandingPage: React.FC = () => {
             A fully customizable scheduling experience for individuals, businesses taking calls, and developers building scheduling platforms where users meet users.
           </p>
 
-          {/* Using onClick instead of form */}
           <Button onClick={handleSignIn} className="w-full bg-black text-white hover:bg-gray-800 mb-3">
             Sign up with Google
           </Button>
